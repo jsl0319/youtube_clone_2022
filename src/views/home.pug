@@ -3,6 +3,8 @@ include mixins/video
 
 block content
         h2 Welcome to Wetube
+        if videos.length
            each video in videos
              +video(video)
-        input(placeholder="input text")
+        else 
+            h3 Not Found content!
