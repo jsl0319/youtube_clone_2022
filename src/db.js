@@ -1,6 +1,8 @@
-import mongoose from "mongoose"
+import mongoose, { mongo } from "mongoose"
 
-mongoose.connect("mongodb://127.0.0.1:27017/wetube", {
+const mongoUri = "mongodb://127.0.0.1:27017/wetube";
+
+mongoose.connect(mongoUri, {
     useNewUrlParser : true,
     useUnifiedTopology : true
 });

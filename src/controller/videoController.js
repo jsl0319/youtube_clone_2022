@@ -1,9 +1,14 @@
 import Video from "../models/Video"
 
-export const home = (req, res) => {
-    Video.find({}, (error, videos) =>{
-    return res.render("home", {pageTitle : "Home", videos : []})
-})};
+export const home = async (req, res) => {
+    try{
+        const videos = await Video.find({});
+        return res.render("home", {pageTitle : "Home", videos})
+    }
+    catch{
+       return res.render("error-page")
+    }
+};
 
 export const search = (req, res) => {res.send('search')};
 
