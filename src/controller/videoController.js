@@ -23,7 +23,7 @@ let videos = [
       views: 59,
       id: 3,
     },
-  ];
+  ];    
 export const trending = (req, res) => {return res.render("home", {pageTitle : "Home", videos})};
 export const search = (req, res) => {res.send('search')};
 export const watch = (req,res) => {
@@ -37,6 +37,19 @@ export const getEdit = (req,res) => {
     return res.render('edit', {pageTitle : `Edit ${video.title}`, video})
 };
 
-export const postEdit = (req,res) => {};
-export const deleteVideo = (req,res) => {res.send('deleteVideo')};
-export const upload = (req,res) => {res.send('upload video')};
+export const postEdit = (req,res) => {
+    let { id } = req.params;
+    console.log(req.body)
+    return res.redirect(`/videos/${ id }`)
+};
+
+export const deleteVideo = (req,res) => {return res.send('deleteVideo')};
+
+export const getUpload = (req, res) => {
+    let pageTitle = 'Upload Video';
+    return res.render("upload", { pageTitle })
+};
+
+export const postUpload = (req, res) => {
+    return res.redirect("/")
+};

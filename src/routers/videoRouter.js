@@ -4,14 +4,16 @@ watch,
 getEdit,
 postEdit,
 deleteVideo,
-upload} from "../controller/videoController"
+getUpload,
+postUpload
+} from "../controller/videoController"
+
 
 const videoRouter = express.Router();
 
 videoRouter.get("/:id(\\d+)", watch)
-videoRouter.get("/:id(\\d+)/edit", getEdit);
-videoRouter.post("/:id(\\d+)/edit", postEdit);
+videoRouter.route("/:id(\\d+)/edit").get(getEdit).post(postEdit);
 videoRouter.get("/:id(\\d+)/delete", deleteVideo);
-videoRouter.get("/upload", upload)
+videoRouter.route("/upload").get(getUpload).post(postUpload);
 
 export default videoRouter
