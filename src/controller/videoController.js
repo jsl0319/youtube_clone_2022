@@ -3,6 +3,7 @@ import Video from "../models/Video"
 export const home = async (req, res) => {
     try{
         const videos = await Video.find({});
+        console.log(videos);
         return res.render("home", {pageTitle : "Home", videos})
     }
     catch{
@@ -29,8 +30,26 @@ export const getUpload = (req, res) => {
     return res.render("upload", { pageTitle })
 };
 
-export const postUpload = (req, res) => {
-    return res.redirect("/")
+export const postUpload = async (req, res) => {
+    const {title, description, hashtags} = req.body;
+    try {
+        await Video.create({
+            title,
+            description,
+            createdDat,
+            hashtags: hashtags.split(",").map(word => `#${word}`),
+            meta:{
+                views,
+                rating
+            }
+        })
+        return res.redirect("/")
+    }
+    catch(error) {
+        let pageTitle = 'Upload Video';
+        console.log(error);
+        return res.render("upload", { pageTitle, errorMessage : error._message})
+    }
 };
 
 export const deleteVideo = (req,res) => {return res.send('deleteVideo')};
