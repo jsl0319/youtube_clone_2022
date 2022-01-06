@@ -20,12 +20,24 @@ export const search = (req, res) => {res.send('search')};
 export const watch = async (req,res) => {
     const { id } = req.params;
     const video = await Video.findById(id);
-    return res.render("watch", { pageTitle: video.title, video })
+
+    if (!video)
+        return res.render("404", {pageTitle : 'Detail 404 Error'})
+    else
+        return res.render("watch", { pageTitle: video.title, video })
 };
+
 // 수정 page
-export const getEdit = (req,res) => {
-    return res.render('edit')
+export const getEdit = async (req,res) => {
+    let { id } = req.params;
+    let video = await Video.findById(id);
+
+    if(!video)
+        return res.render('404', {pageTitle : 'Edit 404 Error' })
+    else
+        return res.render('edit',{pageTitle : `Edit ${video.title}`, video} )
 };
+
 // 업로드 page
 export const getUpload = (req, res) => {
     let pageTitle = 'Upload Video';
@@ -35,18 +47,29 @@ export const getUpload = (req, res) => {
 
 // =========== POST =============
 // 수정
-export const postEdit = (req,res) => {
+export const postEdit = async (req,res) => {
+    let {id} = req.params;
+    const video = await Video.findById(id);
+    const {title, description, hashtags} = req.body
+    video.title = title;
+    video.description = description;
+    video.hashtags = hashtags
+                    .split(",")
+                    .map(word => word.startsWidth('#')?  word :`#${word}`)
+    video.save()
     return res.redirect(`/videos/${ id }`)
 };
 // 업로드
 export const postUpload = async (req, res) => {
-    const {title, description, hashtags} = req.body;
+    const { title, description, hashtags } = req.body;
     try {
         await Video.create({
             title,
             description,
             createdDat,
-            hashtags: hashtags.split(",").map(word => `#${word}`),
+            hashtags: hashtags
+                      .split(",")
+                      .map(word => word.startsWidth('#')?  word :`#${word}`),
             meta:{
                 views,
                 rating
