@@ -8,6 +8,7 @@ import Video from "../models/Video"
 export const home = async (req, res) => {
     try{
         const videos = await Video.find({});
+        console.log('전체목록::'+videos);
         return res.render("home", {pageTitle : "Home", videos})
     }
     catch{
@@ -22,7 +23,7 @@ export const watch = async (req,res) => {
     const video = await Video.findById(id);
 
     if (!video)
-        return res.render("404", {pageTitle : 'Detail 404 Error'})
+        return res.render("404", {pageTitle : 'Not found video.'})
     else
         return res.render("watch", { pageTitle: video.title, video })
 };
@@ -33,7 +34,7 @@ export const getEdit = async (req,res) => {
     let video = await Video.findById(id);
 
     if(!video)
-        return res.render('404', {pageTitle : 'Edit 404 Error' })
+        return res.render('404', {pageTitle : 'Not found video.' })
     else
         return res.render('edit',{pageTitle : `Edit ${video.title}`, video} )
 };
@@ -48,16 +49,23 @@ export const getUpload = (req, res) => {
 // =========== POST =============
 // 수정
 export const postEdit = async (req,res) => {
-    let {id} = req.params;
-    const video = await Video.findById(id);
-    const {title, description, hashtags} = req.body
-    video.title = title;
-    video.description = description;
-    video.hashtags = hashtags
-                    .split(",")
-                    .map(word => word.startsWidth('#')?  word :`#${word}`)
-    video.save()
-    return res.redirect(`/videos/${ id }`)
+    let { id } = req.params;
+    const video = await Video.exists({_id : id});
+    const { title, description, hashtags } = req.body;
+
+    if(!video)
+       return res.render('404', {pageTitle : 'Not found video.' })
+
+    else {
+       await Video.findByIdAndUpdate(id, {
+            title,
+            description,
+            hashtags : hashtags.split(",")
+                       .map((word) => word.startsWith('#')?  word :`#${word}`)
+        })
+
+        return res.redirect(`/videos/${ id }`)
+    }
 };
 // 업로드
 export const postUpload = async (req, res) => {
@@ -69,7 +77,7 @@ export const postUpload = async (req, res) => {
             createdDat,
             hashtags: hashtags
                       .split(",")
-                      .map(word => word.startsWidth('#')?  word :`#${word}`),
+                      .map((word) => word.startsWith('#')?  word :`#${word}`),
             meta:{
                 views,
                 rating
