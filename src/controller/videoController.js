@@ -83,5 +83,16 @@ export const postUpload = async (req, res) => {
         return res.render("upload", { pageTitle, errorMessage : error})
     }
 };
+
 // 삭제
-export const deleteVideo = (req,res) => {return res.send('deleteVideo')};
+export const deleteVideo = async (req,res) => {
+    let {id} = req.params;
+
+    try{
+        await Video.findByIdAndDelete(id);
+        return res.redirect('/');
+    }
+    catch(error){
+        return res.render("404", {pageTitle : "Delete Error"})
+    }
+};
