@@ -16,13 +16,20 @@ export const home = async (req, res) => {
 };
 
 // 검색
-export const search = (req, res) => {
-    console.log('쿼리쿼리:::',req.query);
+export const search = async (req, res) => {
     let { keyword } = req.query;
+    let videos = [];
     if (keyword){
         // search
+        videos = await Video.find({
+            title : {
+                // i => 대소문자 구분 X
+                $regex : new RegExp(`${keyword}`, "i")
+            }
+        })
+        console.log('호출은 돼니 :: ', videos)
     }
-    return res.render('search', {pageTitle : 'Search Page'});
+    return res.render('search', {pageTitle : 'Search Page', videos});
 };
 
 // 상세 page
