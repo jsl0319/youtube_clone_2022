@@ -12,12 +12,20 @@ const videoSchema = new mongoose.Schema({
     }
 })
 
-// Middleware : 모델 생성 전-후처리
-videoSchema.pre("save", async function() {
-  console.log('디스가 있늬??', this);
-  this.hashtags = this.hashtags[0]
-                  .split(",")
-                  .map(word => word.startsWith("#") ? word : `#${word}`);
+// // Middleware : 모델 생성 전-후처리
+// videoSchema.pre("save", async function() {
+//   console.log('디스가 있늬??', this);
+//   this.hashtags = this.hashtags[0]
+//                   .split(",")
+//                   .map(word => word.startsWith("#") ? word : `#${word}`);
+// })
+
+// static 함수
+videoSchema.static("formatHashtags", (hashtags) => {
+  console.log('해쉬태그 어케들어 오닠::', hashtags);
+  return hashtags
+        .split(",")
+        .map(word => word.startsWith("#") ? word : `#${word}`);
 })
 
 // Model 생성 - Video 모델 생성

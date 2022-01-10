@@ -16,6 +16,7 @@ export const home = async (req, res) => {
 };
 
 export const search = (req, res) => {res.send('search')};
+
 // 상세 page
 export const watch = async (req,res) => {
     const { id } = req.params;
@@ -59,7 +60,7 @@ export const postEdit = async (req,res) => {
        await Video.findByIdAndUpdate(id, {
             title,
             description,
-            hashtags 
+            hashtags : Video.formatHashtags(hashtags)
         })
 
         return res.redirect(`/videos/${ id }`)
@@ -73,7 +74,7 @@ export const postUpload = async (req, res) => {
         await Video.create({
             title,
             description,
-            hashtags
+            hashtags : Video.formatHashtags(hashtags)
         })
         return res.redirect("/")
     }
