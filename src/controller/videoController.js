@@ -8,7 +8,6 @@ import Video from "../models/Video"
 export const home = async (req, res) => {
     try{
         const videos = await Video.find({});
-        console.log('전체목록::'+videos);
         return res.render("home", {pageTitle : "Home", videos})
     }
     catch{
@@ -60,8 +59,7 @@ export const postEdit = async (req,res) => {
        await Video.findByIdAndUpdate(id, {
             title,
             description,
-            hashtags : hashtags.split(",")
-                       .map((word) => word.startsWith('#')?  word :`#${word}`)
+            hashtags 
         })
 
         return res.redirect(`/videos/${ id }`)
@@ -70,24 +68,19 @@ export const postEdit = async (req,res) => {
 // 업로드
 export const postUpload = async (req, res) => {
     const { title, description, hashtags } = req.body;
+    console.log('controller ::: ', req.body)
     try {
         await Video.create({
             title,
             description,
-            createdDat,
-            hashtags: hashtags
-                      .split(",")
-                      .map((word) => word.startsWith('#')?  word :`#${word}`),
-            meta:{
-                views,
-                rating
-            }
+            hashtags
         })
         return res.redirect("/")
     }
     catch(error) {
+        console.log('에러에러???',error);
         let pageTitle = 'Upload Video';
-        return res.render("upload", { pageTitle, errorMessage : error._message})
+        return res.render("upload", { pageTitle, errorMessage : error})
     }
 };
 // 삭제
