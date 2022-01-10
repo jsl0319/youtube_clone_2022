@@ -15,7 +15,15 @@ export const home = async (req, res) => {
     }
 };
 
-export const search = (req, res) => {res.send('search')};
+// 검색
+export const search = (req, res) => {
+    console.log('쿼리쿼리:::',req.query);
+    let { keyword } = req.query;
+    if (keyword){
+        // search
+    }
+    return res.render('search', {pageTitle : 'Search Page'});
+};
 
 // 상세 page
 export const watch = async (req,res) => {
