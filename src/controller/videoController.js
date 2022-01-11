@@ -19,6 +19,7 @@ export const home = async (req, res) => {
 export const search = async (req, res) => {
     let { keyword } = req.query;
     let videos = [];
+    
     if (keyword){
         // search
         videos = await Video.find({
@@ -28,8 +29,10 @@ export const search = async (req, res) => {
             }
         })
         console.log('호출은 돼니 :: ', videos)
+        return res.render('search', {pageTitle : 'Search Page', videos});
     }
-    return res.render('search', {pageTitle : 'Search Page', videos});
+    return res.render('search', {pageTitle : 'Search Page'})
+    
 };
 
 // 상세 page
