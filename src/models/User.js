@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // Schema 생성.
 const UserSchema = new mongoose.Schema({
@@ -7,6 +8,13 @@ const UserSchema = new mongoose.Schema({
     userName : { type : String, required : true, unique : true} ,
     password : { type : String, required : true },
     location : { type : String }
+})
+
+// Passowrd 해싱
+UserSchema.pre("save", async function(){
+    console.log('input password::', this.password);
+    this.password = await bcrypt.hash(this.password, 5);
+    console.log('hashed password::', this.password);
 })
 
 // Model 생성 - Video 모델 생성
