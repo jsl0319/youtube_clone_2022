@@ -31,7 +31,7 @@ export const search = async (req, res) => {
         console.log('호출은 돼니 :: ', videos)
         return res.render('search', {pageTitle : 'Search Page', videos});
     }
-    return res.render('search', {pageTitle : 'Search Page'})
+    return res.render('search', {pageTitle : 'Search Page', videos})
     
 };
 
