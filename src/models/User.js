@@ -15,7 +15,7 @@ UserSchema.pre("save", async function(){
     console.log('input password::', this.password);
     this.password = await bcrypt.hash(this.password, 5);
     console.log('hashed password::', this.password);
-})
+});
 
 // Model 생성 - Video 모델 생성
 const User = mongoose.model("User", UserSchema);

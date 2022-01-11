@@ -1,5 +1,5 @@
 /**
- * Video Controller - Video CRUD!
+ * Video Controller
  */
 import Video from "../models/Video"
 

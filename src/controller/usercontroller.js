@@ -1,21 +1,35 @@
+/**
+ * User Controller
+ */
 import User from '../models/User'
 
 export const getJoin = (req, res)=> {
     res.render('join', {pageTitle : 'Join Page'})
 };
 export const postJoin = async (req, res)=> {
-    let { name, userName, password, email, location } = req.body;
+    const pageTitle = "Join Page"
+    let { name, userName, password, password2, email, location } = req.body;
+    const exists = await User.exists({$or : [{userName},{email}]});
 
-    await User.create({
-        name,
-        userName,
-        email,
-        password,
-        location
-    })
+    if(password !== password2){
+        return res.render('join', { pageTitle, errorMessage : "Deffirant password!" })
+    }
 
-    res.redirect("/login");
+    if(exists){
+       return res.render('join', { pageTitle, errorMessage : "Aleary Exsist userName/email" })
+    }
+    else{
+        await User.create({
+            name,
+            userName,
+            email,
+            password,
+            location
+        })
+      return res.redirect("/login", { pageTitle : "Login Page" } );
+    }
 };
+
 export const login = (req, res) => {res.send('login')};
 export const logout = (req, res) => {res.send('logout')};
 export const edit = (req, res)=> {res.send('edit user')}
