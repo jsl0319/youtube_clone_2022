@@ -11,7 +11,7 @@ export const home = async (req, res) => {
         return res.render("home", {pageTitle : "Home", videos})
     }
     catch{
-       return res.render("error-page")
+       return res.status(404).render("404",{pageTitle : 'Not found page.'} )
     }
 };
 
@@ -41,7 +41,7 @@ export const watch = async (req,res) => {
     const video = await Video.findById(id);
 
     if (!video)
-        return res.render("404", {pageTitle : 'Not found video.'})
+        return res.status(404).render("404", {pageTitle : 'Not found video.'})
     else
         return res.render("watch", { pageTitle: video.title, video })
 };
@@ -52,7 +52,7 @@ export const getEdit = async (req,res) => {
     let video = await Video.findById(id);
 
     if(!video)
-        return res.render('404', {pageTitle : 'Not found video.' })
+        return res.status(404).render('404', {pageTitle : 'Not found video.' })
     else
         return res.render('edit',{pageTitle : `Edit ${video.title}`, video} )
 };
@@ -72,7 +72,7 @@ export const postEdit = async (req,res) => {
     const { title, description, hashtags } = req.body;
 
     if(!video)
-       return res.render('404', {pageTitle : 'Not found video.' })
+       return res.status(400).render('edit', {pageTitle : '수정 불가 ㅠㅠ' })
 
     else {
        await Video.findByIdAndUpdate(id, {
@@ -87,7 +87,6 @@ export const postEdit = async (req,res) => {
 // 업로드
 export const postUpload = async (req, res) => {
     const { title, description, hashtags } = req.body;
-    console.log('controller ::: ', req.body)
     try {
         await Video.create({
             title,
@@ -98,19 +97,13 @@ export const postUpload = async (req, res) => {
     }
     catch(error) {
         let pageTitle = 'Upload Video';
-        return res.render("upload", { pageTitle, errorMessage : error})
+        return res.status(400).render("upload", { pageTitle, errorMessage : error})
     }
 };
 
 // 삭제
 export const deleteVideo = async (req,res) => {
-    let {id} = req.params;
-
-    try{
-        await Video.findByIdAndDelete(id);
-        return res.redirect('/');
-    }
-    catch(error){
-        return res.render("404", {pageTitle : "Delete Error"})
-    }
+    let { id } = req.params;
+    await Video.findByIdAndDelete(id);
+    return res.redirect('/');
 };

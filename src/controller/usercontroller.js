@@ -12,11 +12,11 @@ export const postJoin = async (req, res)=> {
     const exists = await User.exists({$or : [{userName},{email}]});
 
     if(password !== password2){
-        return res.render('join', { pageTitle, errorMessage : "Deffirant password!" })
+        return res.status(400).render('join', { pageTitle, errorMessage : "Deffirant password!" })
     }
 
     if(exists){
-       return res.render('join', { pageTitle, errorMessage : "Aleary Exsist userName/email" })
+       return res.status(400).render('join', { pageTitle, errorMessage : "Aleary Exsist userName/email" })
     }
     else{
         await User.create({
