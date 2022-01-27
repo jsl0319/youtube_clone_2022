@@ -2,6 +2,7 @@
  * User Controller
  */
 import User from '../models/User'
+import bcrypt from 'bcrypt'
 
 export const getJoin = (req, res)=> {
     return res.render('join', { pageTitle : 'Join Page' })
@@ -17,7 +18,7 @@ export const postJoin = async (req, res) => {
 
     if(exists)
        return res.status(400)
-       .render('join', { pageTitle, errorMessage : "This username/email is already taken" })
+                 .render('join', { pageTitle, errorMessage : "This username/email is already taken" })
     else{
         await User.create({
             name,
@@ -30,7 +31,27 @@ export const postJoin = async (req, res) => {
     }
 };
 
-export const login = (req, res) => {return res.render('login', { pageTitle : 'Login Page'})};
+export const getLogin = (req, res) => { return res.render('login', { pageTitle : 'Login Page'})};
+export const postLogin = async (req, res) => { 
+    let pageTitle = 'Login Page';
+    const { userName , password } = res.body;
+    const user  = await User.findOne({userName});
+    // const exist = await User.exists({ $and : [{userName}, {password}] });
+
+    if(!user){
+        return res.status(400)
+                  .render("login", 
+                  { pageTitle, errorMessage : 'Not Exist User'})
+    } 
+
+    const ok = await bcrypt.compare(password, user.password);
+    if(!ok) {
+        return res.render("login", { pageTitle, errorMessage : 'Wrong Password'})
+    }
+
+    return res.redirect("/");
+}
+
 export const logout = (req, res) => {res.send('logout')};
 export const edit = (req, res)=> {res.send('edit user')}
 export const remove = (req,res) => {res.send('remove video')};

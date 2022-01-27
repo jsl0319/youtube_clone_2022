@@ -1,7 +1,15 @@
 extends base.pug
 
 block content
-form(method="POST") 
-    input(type="emain" name="email" placeHolder="E-mail" required)
-    input(type="password" name="password" placeHolder="Password" required)
-    input(type="submit" value="Login")
+    if errorMessage
+        span=errorMessage
+    form(method="POST") 
+        label(for="userName") 
+            input(type="text" id="userName" name="userName" placeHolder="User name" required)
+        label(for="password")
+            input(type="password" id="password" name="password" placeHolder="Password" required)
+            input(type="submit" value="Login")
+    hr
+    div 
+    span Don't have account?
+    a(href="/join") Create one now &rarr; 
