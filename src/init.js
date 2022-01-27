@@ -1,3 +1,4 @@
+/** 진입점 */
 import "./db"
 import "./models/Video"
 import "./models/User"

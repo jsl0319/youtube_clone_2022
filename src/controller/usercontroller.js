@@ -4,20 +4,20 @@
 import User from '../models/User'
 
 export const getJoin = (req, res)=> {
-    res.render('join', {pageTitle : 'Join Page'})
+    return res.render('join', { pageTitle : 'Join Page' })
 };
-export const postJoin = async (req, res)=> {
+export const postJoin = async (req, res) => {
     const pageTitle = "Join Page"
     let { name, userName, password, password2, email, location } = req.body;
-    const exists = await User.exists({$or : [{userName},{email}]});
+    const exists = await User.exists({ $or : [{userName}, {email}]} );
 
-    if(password !== password2){
-        return res.status(400).render('join', { pageTitle, errorMessage : "Deffirant password!" })
-    }
+    if(password !== password2)
+        return res.status(400)
+                  .render('join', { pageTitle, errorMessage : "Password 확인해주세요." })
 
-    if(exists){
-       return res.status(400).render('join', { pageTitle, errorMessage : "Aleary Exsist userName/email" })
-    }
+    if(exists)
+       return res.status(400)
+       .render('join', { pageTitle, errorMessage : "This username/email is already taken" })
     else{
         await User.create({
             name,
@@ -30,7 +30,7 @@ export const postJoin = async (req, res)=> {
     }
 };
 
-export const login = (req, res) => {res.send('login')};
+export const login = (req, res) => {return res.render('login', { pageTitle : 'Login Page'})};
 export const logout = (req, res) => {res.send('logout')};
 export const edit = (req, res)=> {res.send('edit user')}
 export const remove = (req,res) => {res.send('remove video')};
