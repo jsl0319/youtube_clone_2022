@@ -1,6 +1,7 @@
 import express from "express"
 import session from "express-session"
 import morgan from "morgan"
+import { localMiddlware } from "./middlewares/localMiddlware"
 import rootRouter from "./routers/rootRouter"
 import userRouter from "./routers/userRouter"
 import videoRouter from "./routers/videoRouter"
@@ -27,12 +28,13 @@ app.use(session({
 // test
 app.use((req, res, next) => {
     req.sessionStore.all((error,sessions) => {
-        // console.log('req sessionStore::', sessions);
+    console.log('req sessionStore::', sessions);
         next();
     })
 })
 
 // router 시작점 => 미들웨어
+app.use(localMiddlware);
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", videoRouter);

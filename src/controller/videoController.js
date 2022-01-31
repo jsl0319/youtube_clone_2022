@@ -56,13 +56,14 @@ export const getEdit = async (req,res) => {
 // 수정
 export const postEdit = async (req, res) => {
     let { id } = req.params;
-    const video = await Video.exists(id);
+    const video = await Video.exists({id});
+
     const { title, description, hashtags } = req.body;
 
     if(!video)
-       return res.status(400).render('400', { pageTitle : 'Failed Edit Page'  })
+        return res.status(400).render('400', { pageTitle : 'Failed Edit Page'  })
     else {
-       await Video.findByIdAndUpdate(id, {
+        await Video.findByIdAndUpdate(id, {
             title,
             description,
             hashtags : Video.formatHashtags(hashtags)
