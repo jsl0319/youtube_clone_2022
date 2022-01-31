@@ -1,6 +1,5 @@
 import express from "express"
 import session from "express-session"
-// import mongodbStore from "express-mongodb-session-session"
 import morgan from "morgan"
 import rootRouter from "./routers/rootRouter"
 import userRouter from "./routers/userRouter"
@@ -19,12 +18,12 @@ app.use(express.urlencoded({extended : true }));
 app.use(logger);
 
 // session 설정
-const options = {
-    secret : 'secret key',
-    resave : false,
-    saveUninitialized : false
-}
-app.use(session(options))
+app.use(session({
+    secret : "secret key",
+    resave : true,
+    saveUninitialized : true    
+}))
+
 // test
 app.use((req, res, next) => {
     req.sessionStore.all((error,sessions) => {
@@ -33,10 +32,6 @@ app.use((req, res, next) => {
     })
 })
 
-app.get("/add-one",(req, res, next) => {
-req.session.potato += 1;
-return res.send(`${req.session.id} ::: ${req.session.potato}`);
-})
 // router 시작점
 app.use("/", rootRouter);
 app.use("/users", userRouter);
