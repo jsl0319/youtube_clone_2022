@@ -2,7 +2,7 @@ import express from "express"
 import {
 edit,
 remove,
-see, 
+see,
 logout } from "../controller/usercontroller"
 
 const usersRouter = express.Router();

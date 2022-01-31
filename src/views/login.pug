@@ -3,11 +3,9 @@ extends base.pug
 block content
     if errorMessage
         span=errorMessage
-    form(method="POST") 
-        label(for="userName") 
-            input(type="text" id="userName" name="userName" placeHolder="User name" required)
-        label(for="password")
-            input(type="password" id="password" name="password" placeHolder="Password" required)
+    form(method="post") 
+            input(type="text" name="userName" placeHolder="User name" required)
+            input(type="password" name="password" placeHolder="Password" required)
             input(type="submit" value="Login")
     hr
     div 

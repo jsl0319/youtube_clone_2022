@@ -27,12 +27,12 @@ app.use(session({
 // test
 app.use((req, res, next) => {
     req.sessionStore.all((error,sessions) => {
-        console.log('쥬뗌므::', sessions);
+        // console.log('req sessionStore::', sessions);
         next();
     })
 })
 
-// router 시작점
+// router 시작점 => 미들웨어
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", videoRouter);
