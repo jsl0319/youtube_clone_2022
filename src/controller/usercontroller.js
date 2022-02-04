@@ -1,8 +1,9 @@
 /**
  * User Controller
  */
-import User from '../models/User'
-import bcrypt from 'bcrypt'
+import User from '../models/User';
+import fetch from 'node-fetch';
+import bcrypt from 'bcrypt';
 
 export const getJoin = (req, res)=> {
     return res.render('join', { pageTitle : 'Join Page' })
@@ -53,6 +54,86 @@ export const postLogin = async (req, res) => {
     req.session.user = user;
 
     return res.redirect("/");
+}
+
+export const startGithubLogin = (req, res) => {
+    // 1. 초기 url 
+    const baseUrl = "https://github.com/login/oauth/authorize"
+    // 2. 요청 parameter
+    const config = {
+        client_id : process.env.GH_CLIENT,
+        allow_signup : false,
+        scope : 'read:user user:email'
+    }
+    // 3. 객체 parameter -> string 변환
+    const param = new URLSearchParams(config).toString();
+    // 4. 완성된 url
+    const finishUrl = `${baseUrl}?${param}`
+    console.log(param)
+    return res.redirect(finishUrl);
+}
+
+export const finishGithubLogin = async (req, res) => {
+    const baseUrl = 'https://github.com/login/oauth/access_token'
+    const config = {
+        client_id : process.env.GH_CLIENT,
+        client_secret : process.env.GH_SECRET,
+        code : req.query.code
+    }
+    const param = new URLSearchParams(config).toString();
+    const finishUrl = `${baseUrl}?${param}`
+
+    const requestUser = await (await fetch(finishUrl, {
+        method: "POST",
+        headers: {
+        Accept: "application/json",
+        },
+        })).json();
+    console.log(requestUser);
+    if("access_token" in requestUser){
+        const { access_token } = requestUser
+        const apiUrl = "https://api.github.com";
+        const userData = await(await fetch(`${apiUrl}/user`,{
+            headers :{
+                Authorization : `token ${access_token}`
+            }
+        })).json();
+        console.log(userData)
+        const emailData = await (await fetch(`${apiUrl}/user/emails`,{
+            headers :{
+                Authorization : `token ${access_token}`
+            }
+        })).json();
+
+        const emailObj = emailData.find(email => email.primary === true && email.verified === true);
+        if(!emailObj) {
+            res.redirect("/login");
+        }
+        const existingUser = await User.find({ email : emailObj.email });
+        if(existingUser){
+            req.session.loggedIn = true;
+            req.session.user = existingUser;
+            console.log('이그지스트?:::',req.session.user);
+            res.redirect("/")
+        } else {
+            const user = await User.create({
+                name : userData.name,
+                socialOnly : true,
+                userName : userData.login,
+                email : emailObj.email,
+                password : "",
+                location : userData.location
+            });
+            req.session.loggedIn = true;
+            req.session.user = user;
+
+            console.log('새로만든당:::',req.session.user);
+            res.redirect("/");
+        }
+
+    } else {
+        res.redirect("/login")
+    }
 }
 
 export const logout = (req, res) => {res.send('logout')};
