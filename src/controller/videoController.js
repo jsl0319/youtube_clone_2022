@@ -7,7 +7,7 @@ import Video from "../models/Video"
 // 전체 목록 페이지(메인)
 export const home = async (req, res) => {
         const videos = await Video.find({});
-           return res.render("home", { pageTitle : "Home", videos })
+        return res.render("home", { pageTitle : "Home", videos })
 };
 
 // 비디오 등록 페이지(업로드)

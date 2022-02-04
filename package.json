@@ -18,9 +18,10 @@
   "homepage": "https://github.com/jsl0319/youtube_clone_2022#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "connect-mongo": "^4.6.0",
     "express": "^4.17.2",
-    "express-session": "^1.17.2",
     "express-mongodb-session": "^3.2.1",
+    "express-session": "^1.17.2",
     "mongoose": "^6.1.4",
     "morgan": "^1.10.0",
     "pug": "^3.0.2"

@@ -2,6 +2,7 @@ import express from "express"
 import session from "express-session"
 import morgan from "morgan"
 import { localMiddlware } from "./middlewares/localMiddlware"
+import MongoStore from "connect-mongo"
 import rootRouter from "./routers/rootRouter"
 import userRouter from "./routers/userRouter"
 import videoRouter from "./routers/videoRouter"
@@ -22,7 +23,8 @@ app.use(logger);
 app.use(session({
     secret : "secret key",
     resave : true,
-    saveUninitialized : true    
+    saveUninitialized : true,
+    store : MongoStore.create({ mongoUrl : "mongodb://127.0.0.1:27017/wetube"})    
 }))
 
 // test
