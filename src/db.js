@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const mongoUri = "mongodb://127.0.0.1:27017/wetube";
+const mongoUri = process.env.DB_URL;
 
 mongoose.connect(mongoUri, {
     useNewUrlParser : true,

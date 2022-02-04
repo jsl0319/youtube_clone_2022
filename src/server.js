@@ -21,10 +21,14 @@ app.use(logger);
 
 // session 설정
 app.use(session({
-    secret : "secret key",
-    resave : true,
-    saveUninitialized : true,
-    store : MongoStore.create({ mongoUrl : "mongodb://127.0.0.1:27017/wetube"})    
+    secret : process.env.COOKIE_SECRET,
+    resave : false,
+    cookie : {
+        maxAge : 1000*60*30 // 30분
+    },
+    saveUninitialized : false,
+    
+    store : MongoStore.create({ mongoUrl : process.env.DB_URL})    
 }))
 
 // test
