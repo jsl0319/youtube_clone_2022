@@ -74,6 +74,7 @@ export const startGithubLogin = (req, res) => {
 }
 
 export const finishGithubLogin = async (req, res) => {
+    // token 가져오기
     const baseUrl = 'https://github.com/login/oauth/access_token'
     const config = {
         client_id : process.env.GH_CLIENT,
@@ -89,45 +90,51 @@ export const finishGithubLogin = async (req, res) => {
         Accept: "application/json",
         },
         })).json();
-    console.log(requestUser);
+
     if("access_token" in requestUser){
         const { access_token } = requestUser
         const apiUrl = "https://api.github.com";
+        // github user 정보 가져오기
         const userData = await(await fetch(`${apiUrl}/user`,{
             headers :{
                 Authorization : `token ${access_token}`
             }
         })).json();
-        console.log(userData)
+
+        // github email 정보 가져오기
         const emailData = await (await fetch(`${apiUrl}/user/emails`,{
             headers :{
                 Authorization : `token ${access_token}`
             }
         })).json();
-
+        
+        // github email 과 같은 wetube email 검사
         const emailObj = emailData.find(email => email.primary === true && email.verified === true);
+
         if(!emailObj) {
             res.redirect("/login");
         }
-        const existingUser = await User.find({ email : emailObj.email });
-        if(existingUser){
+        // wetube user-에 github user-email 존재하는지 검사
+        let user = await User.findOne({ email : emailObj.email , socialOnly : false});
+        if(user){
             req.session.loggedIn = true;
-            req.session.user = existingUser;
-            console.log('이그지스트?:::',req.session.user);
+            req.session.user = user;
             res.redirect("/")
         } else {
-            const user = await User.create({
+            if(userData.name === undefined || userData.name === null) userData.name = 'zsun';
+
+            user = await User.create({
                 name : userData.name,
+                avatarUrl : userData.avatar_url,
                 socialOnly : true,
                 userName : userData.login,
                 email : emailObj.email,
                 password : "",
                 location : userData.location
             });
+
             req.session.loggedIn = true;
             req.session.user = user;
-
-            console.log('새로만든당:::',req.session.user);
             res.redirect("/");
         }
 
@@ -136,7 +143,11 @@ export const finishGithubLogin = async (req, res) => {
     }
 }
 
-export const logout = (req, res) => {res.send('logout')};
+export const logout = (req, res) => {
+    // session clear
+    req.session.destroy();
+    return res.redirect("/")};
+
 export const edit = (req, res)=> {res.send('edit user')}
 export const remove = (req,res) => {res.send('remove video')};
 export const see = (req,res) => {res.send('remove see')};
