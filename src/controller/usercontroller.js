@@ -115,14 +115,17 @@ export const finishGithubLogin = async (req, res) => {
             res.redirect("/login");
         }
         // wetube user-에 github user-email 존재하는지 검사
-        let user = await User.findOne({ email : emailObj.email , socialOnly : false});
+        console.log('깃헙이메일:::',emailObj.email)
+        let user = await User.findOne({ email : emailObj.email});
+        console.log('찾은 유저:::',user);
         if(user){
+            console.log('바로 로그인')
             req.session.loggedIn = true;
             req.session.user = user;
             res.redirect("/")
         } else {
             if(userData.name === undefined || userData.name === null) userData.name = 'zsun';
-
+console.log('새로만들기')
             user = await User.create({
                 name : userData.name,
                 avatarUrl : userData.avatar_url,
@@ -148,6 +151,11 @@ export const logout = (req, res) => {
     req.session.destroy();
     return res.redirect("/")};
 
-export const edit = (req, res)=> {res.send('edit user')}
+export const getEdit = (req, res)=> {
+    return res.render("edit-profile", { pageTitle : 'Edit-Profile' })}
+
+export const postEdit = (req, res)=> {
+    return res.render("profile")}
+
 export const remove = (req,res) => {res.send('remove video')};
 export const see = (req,res) => {res.send('remove see')};
