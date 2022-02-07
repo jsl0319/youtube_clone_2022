@@ -154,8 +154,43 @@ export const logout = (req, res) => {
 export const getEdit = (req, res)=> {
     return res.render("edit-profile", { pageTitle : 'Edit-Profile' })}
 
-export const postEdit = (req, res)=> {
-    return res.render("profile")}
+export const postEdit = async (req, res) => {
+    console.log('진입???');
+   const { session : {
+       user : { _id, email : orgEmail, userName : orgUserName}
+    }
+    , body : { name, email, userName, location } } = req;
+
+    // update 전 userName, email 중복 체크 
+    if(orgEmail === email && orgUserName === userName) {
+            // 기본적으로 update 이전 데이터를 반환 (new : true 시 update 이후 데이터 반환)
+        const editedUser = await User.findByIdAndUpdate(_id, {
+            name,
+            email,
+            userName,
+            location } 
+            , { new : true }
+        )
+        req.session.user = editedUser;
+    }
+    else {
+        const exist = await User.find({  email, userName });
+        if(exist){
+            return res.render("edit-profile", { errorMessage : "❌ Already exist userName / email" })
+        }
+        else {
+            const editedUser = await User.findByIdAndUpdate(_id, {
+                name,
+                email,
+                userName,
+                location } 
+                , { new : true }
+            )
+            req.session.user = editedUser;
+        }
+    }
+    return res.redirect("/users/edit");
+}
 
 export const remove = (req,res) => {res.send('remove video')};
 export const see = (req,res) => {res.send('remove see')};
