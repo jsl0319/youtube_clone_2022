@@ -6,16 +6,19 @@ remove,
 see,
 startGithubLogin,
 finishGithubLogin,
-logout } from "../controller/usercontroller"
+logout,
+getChangePassword,
+postChangePassword } from "../controller/usercontroller"
 import { protectorMiddleware, publicMiddleware } from "../middlewares/localMiddlware";
 
 const usersRouter = express.Router();
 
-usersRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
 usersRouter.get("/github/start", publicMiddleware, startGithubLogin)
 usersRouter.get("/github/finish", publicMiddleware, finishGithubLogin)
-usersRouter.get("/logout", logout)
+usersRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
+usersRouter.route('/change-password').all(protectorMiddleware).get(getChangePassword).post(postChangePassword);
 usersRouter.get(":id(\\d+)", see)
+usersRouter.get("/logout", logout)
 usersRouter.get("/remove", remove)
 
 export default usersRouter

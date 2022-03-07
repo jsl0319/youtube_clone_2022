@@ -4,6 +4,7 @@
 import User from '../models/User';
 import fetch from 'node-fetch';
 import bcrypt from 'bcrypt';
+import { render } from 'express/lib/response';
 
 export const getJoin = (req, res)=> {
     return res.render('join', { pageTitle : 'Join Page' })
@@ -125,7 +126,7 @@ export const finishGithubLogin = async (req, res) => {
             res.redirect("/")
         } else {
             if(userData.name === undefined || userData.name === null) userData.name = 'zsun';
-console.log('새로만들기')
+            console.log('새로만들기')
             user = await User.create({
                 name : userData.name,
                 avatarUrl : userData.avatar_url,
@@ -149,10 +150,12 @@ console.log('새로만들기')
 export const logout = (req, res) => {
     // session clear
     req.session.destroy();
-    return res.redirect("/")};
+    return res.redirect("/")
+};
 
 export const getEdit = (req, res)=> {
-    return res.render("edit-profile", { pageTitle : 'Edit-Profile' })}
+    return res.render("edit-profile", { pageTitle : 'Edit-Profile' })
+};
 
 export const postEdit = async (req, res) => {
     console.log('진입???');
@@ -190,6 +193,52 @@ export const postEdit = async (req, res) => {
         }
     }
     return res.redirect("/users/edit");
+}
+
+export const getChangePassword = (req, res, next) => {
+    if(req.session.user.socialOnly === true) {
+        return res.redirect("/");
+    }
+    const pageTitle = 'Change Password';
+    return res.render('users/change-password', { pageTitle });
+}
+
+export const postChangePassword = async (req, res, next) => { 
+    let {
+        session: {
+           user: { _id, password }
+        },
+         body: { 
+            curPassword, 
+            newPassword, 
+            confirmPassword
+        }
+    } = req;
+    
+    // bcrypto 비교
+    console.log('curPassword',curPassword);
+    let ok = await bcrypt.compare(curPassword, password);
+    console.log('password',password)
+    if(!ok) {
+        return res.status(400)
+            .render("users/change-password", {
+                    pageTitle : 'Change Password',
+                    errorMessage : '현재 사용중인 password가 아닙니다.'
+        })
+    }
+    
+    if(newPassword !== confirmPassword){
+        return res.status(400)
+            .render('users/change-password', { 
+                    pageTitle : 'Change Password',
+                    errorMessage : 'password를 올바르게 입력해주세요.' })
+    }
+
+    const user = await User.findById({ _id });
+    user.password = newPassword;
+    await user.save();
+    req.session.user.password = user.password;
+    return res.redirect('/users/logout');
 }
 
 export const remove = (req,res) => {res.send('remove video')};
