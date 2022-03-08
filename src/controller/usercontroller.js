@@ -154,20 +154,30 @@ export const logout = (req, res) => {
 };
 
 export const getEdit = (req, res)=> {
+
     return res.render("edit-profile", { pageTitle : 'Edit-Profile' })
 };
 
 export const postEdit = async (req, res) => {
     console.log('진입???');
    const { session : {
-       user : { _id, email : orgEmail, userName : orgUserName}
+       user : { _id,
+                avatarUrl,
+                email : orgEmail,
+                userName : orgUserName}
     }
-    , body : { name, email, userName, location } } = req;
-
+    , body : { name,
+               email,
+               userName,
+               location } 
+    , file
+    } = req;
+    console.log('file',file);
     // update 전 userName, email 중복 체크 
     if(orgEmail === email && orgUserName === userName) {
             // 기본적으로 update 이전 데이터를 반환 (new : true 시 update 이후 데이터 반환)
         const editedUser = await User.findByIdAndUpdate(_id, {
+            avatarUrl: file ? file.path : avatarUrl,
             name,
             email,
             userName,
