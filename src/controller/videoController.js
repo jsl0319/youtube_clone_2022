@@ -17,16 +17,19 @@ export const getUpload = (req, res) => {
 };
 // 비디오 등록(업로드)
 export const postUpload = async (req, res) => {
+    const { path: fileUrl} = req.file;
     const { title, description, hashtags } = req.body; // input 요청 -> post 요청시 input 값
     try {
         await Video.create({
             title,
             description,
+            fileUrl,
             hashtags : Video.formatHashtags(hashtags)
         })
         return res.redirect("/")
     }
     catch(error) {
+        console.log(error);
         const pageTitle = 'Upload Video';
         return res.status(400).render("upload", { pageTitle, errorMessage : error})
     }

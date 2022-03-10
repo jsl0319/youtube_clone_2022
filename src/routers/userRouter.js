@@ -12,13 +12,13 @@ import {
 import {
         protectorMiddleware,
         publicMiddleware,
-        uploadFiles } from "../middlewares/localMiddlware";
+        avatarUpload } from "../middlewares/localMiddlware";
 
 const usersRouter = express.Router();
 
 usersRouter.get("/github/start", publicMiddleware, startGithubLogin)
 usersRouter.get("/github/finish", publicMiddleware, finishGithubLogin)
-usersRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(uploadFiles.single('avatar'), postEdit);
+usersRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(avatarUpload.single('avatar'), postEdit);
 usersRouter.route('/change-password').all(protectorMiddleware).get(getChangePassword).post(postChangePassword);
 usersRouter.get(":id(\\d+)", see)
 usersRouter.get("/logout", logout)

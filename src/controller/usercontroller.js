@@ -38,7 +38,6 @@ export const postLogin = async (req, res) => {
     let pageTitle = 'Login Page';
     const { userName , password } = req.body;
     const user  = await User.findOne({userName});
-    // const exist = await User.exists({ $and : [{userName}, {password}] });
 
     if(!user){
         return res.status(400)
