@@ -41,6 +41,8 @@ app.use((req, res, next) => {
 
 // router 시작점 => 미들웨어
 app.use(localMiddlware);
+// 경로 / 저장폴더명
+app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);
 app.use("/users", userRouter);
 app.use("/videos", videoRouter);
