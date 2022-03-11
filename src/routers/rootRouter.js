@@ -6,7 +6,7 @@ postJoin,
 getLogin,
 postLogin }
 from "../controller/usercontroller"
-import { publicMiddleware } from "../middlewares/localMiddlware";
+import { publicMiddleware } from "../middlewares";
 
 const rootRouter = express.Router();
 

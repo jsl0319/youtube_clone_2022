@@ -12,7 +12,7 @@ import {
 import {
         protectorMiddleware,
         publicMiddleware,
-        avatarUpload } from "../middlewares/localMiddlware";
+        avatarUpload } from "../middlewares";
 
 const usersRouter = express.Router();
 
@@ -20,7 +20,7 @@ usersRouter.get("/github/start", publicMiddleware, startGithubLogin)
 usersRouter.get("/github/finish", publicMiddleware, finishGithubLogin)
 usersRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(avatarUpload.single('avatar'), postEdit);
 usersRouter.route('/change-password').all(protectorMiddleware).get(getChangePassword).post(postChangePassword);
-usersRouter.get(":id(\\d+)", see)
+usersRouter.get("/:id", see)
 usersRouter.get("/logout", logout)
 usersRouter.get("/remove", remove)
 

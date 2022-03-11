@@ -248,5 +248,16 @@ export const postChangePassword = async (req, res, next) => {
     return res.redirect('/users/logout');
 }
 
+export const see = async (req, res) => {
+    console.log('req.param', req.param);
+    const { id } = req.params;
+    const user = await User.findById({ id });
+
+    if(!user){
+        return res.status(404).render('404', { pageTitle: 'not found user' });
+    }
+
+    return res.render('users/profile', { pageTitle: user.name, user });
+};
+
 export const remove = (req,res) => {res.send('remove video')};
-export const see = (req,res) => {res.send('remove see')};

@@ -1,7 +1,7 @@
 import express from "express"
 import session from "express-session"
 import morgan from "morgan"
-import { localMiddlware } from "./middlewares/localMiddlware"
+import { localMiddlware } from "./middlewares"
 import MongoStore from "connect-mongo"
 import rootRouter from "./routers/rootRouter"
 import userRouter from "./routers/userRouter"
