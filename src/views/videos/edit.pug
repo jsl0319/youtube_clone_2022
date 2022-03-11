@@ -1,8 +1,10 @@
-extends base.pug
+extends ../base.pug
 
 block content
         h4 Change Title of video
-        form(method="POST")
+        form(method="POST" enctype="multipart/form-data")
+          label(for="video") 
+          input(type="file", name="video", accept="video/*", id="video", required)
           input(name="title", placeholder="Video Title", value=video.title, required)
           input(name="description", placeholder="Description", value=video.description, required)
           input(name="hashtags", placeholder="Hashtags", value=video.hashtags.join(), required)

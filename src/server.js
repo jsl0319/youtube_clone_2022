@@ -31,16 +31,9 @@ app.use(session({
     store : MongoStore.create({ mongoUrl : process.env.DB_URL})    
 }))
 
-// test
-app.use((req, res, next) => {
-    req.sessionStore.all((error,sessions) => {
-    console.log('req sessionStore::', sessions);
-        next();
-    })
-})
-
 // router 시작점 => 미들웨어
 app.use(localMiddlware);
+
 // 경로 / 저장폴더명
 app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);

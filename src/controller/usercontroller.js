@@ -4,7 +4,6 @@
 import User from '../models/User';
 import fetch from 'node-fetch';
 import bcrypt from 'bcrypt';
-import { render } from 'express/lib/response';
 
 export const getJoin = (req, res)=> {
     return res.render('join', { pageTitle : 'Join Page' })
@@ -154,7 +153,7 @@ export const logout = (req, res) => {
 
 export const getEdit = (req, res)=> {
 
-    return res.render("edit-profile", { pageTitle : 'Edit-Profile' })
+    return res.render("users/edit-profile", { pageTitle : 'Edit-Profile' })
 };
 
 export const postEdit = async (req, res) => {
@@ -223,7 +222,7 @@ export const postChangePassword = async (req, res, next) => {
         }
     } = req;
     
-    // bcrypto 비교
+    // bcrypt 비교
     console.log('curPassword',curPassword);
     let ok = await bcrypt.compare(curPassword, password);
     console.log('password',password)
@@ -242,7 +241,7 @@ export const postChangePassword = async (req, res, next) => {
                     errorMessage : 'password를 올바르게 입력해주세요.' })
     }
 
-    const user = await User.findById({ _id });
+    let user = await User.findById({ _id });
     user.password = newPassword;
     await user.save();
     req.session.user.password = user.password;

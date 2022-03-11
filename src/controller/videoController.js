@@ -54,7 +54,7 @@ export const getEdit = async (req,res) => {
     if(!video)
         return res.status(404).render('404', { pageTitle : 'Not found video.' })
     else
-        return res.render('edit',{pageTitle : `Edit ${video.title}`, video} )
+        return res.render('videos/edit',{pageTitle : `Edit ${video.title}`, video} )
 };
 // 수정
 export const postEdit = async (req, res) => {
