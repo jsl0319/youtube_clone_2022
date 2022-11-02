@@ -1,11 +1,11 @@
-# Me
+# Me 
 /node_modules
-.env
+.env.*
 /uploads
 .DS_Stroe
 package-lock.json
 
-# 
+
 # Logs
 logs
 *.log
