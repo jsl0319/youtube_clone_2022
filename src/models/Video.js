@@ -15,7 +15,6 @@ const videoSchema = new mongoose.Schema({
 
 // static 함수
 videoSchema.static("formatHashtags", (hashtags) => {
-  console.log("해쉬태그 어케들어 오닠::", hashtags);
   return hashtags
     .split(",")
     .map((word) => (word.startsWith("#") ? word : `#${word}`));

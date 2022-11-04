@@ -30,8 +30,8 @@ usersRouter
   .all(protectorMiddleware)
   .get(getChangePassword)
   .post(postChangePassword);
-usersRouter.get("/:id", see);
 usersRouter.get("/logout", logout);
 usersRouter.get("/remove", remove);
+usersRouter.get("/:id", see);
 
 export default usersRouter;

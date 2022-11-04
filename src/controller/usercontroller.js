@@ -64,6 +64,7 @@ export const postLogin = async (req, res) => {
 
 export const startGithubLogin = (req, res) => {
   // 1. 초기 url
+  console.log('1');
   const baseUrl = "https://github.com/login/oauth/authorize";
   // 2. 요청 parameter
   const config = {
@@ -81,6 +82,7 @@ export const startGithubLogin = (req, res) => {
 
 export const finishGithubLogin = async (req, res) => {
   // token 가져오기
+  console.log('2');
   const baseUrl = "https://github.com/login/oauth/access_token";
   const config = {
     client_id: process.env.GH_CLIENT,
@@ -162,6 +164,7 @@ export const finishGithubLogin = async (req, res) => {
 
 export const logout = (req, res) => {
   // session clear
+  console.log('req.session', req.session);
   req.session.destroy();
   return res.redirect("/");
 };
