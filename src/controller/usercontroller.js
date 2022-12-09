@@ -5,9 +5,11 @@ import User from "../models/User";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
+// 회원가입 화면
 export const getJoin = (req, res) => {
   return res.render("join", { pageTitle: "Join Page" });
 };
+// 회원가입 수행
 export const postJoin = async (req, res) => {
   const pageTitle = "Join Page";
   const { name, userName, password, password2, email, location } = req.body;
@@ -22,7 +24,7 @@ export const postJoin = async (req, res) => {
   if (exists) {
     return res.render("join", {
       pageTitle,
-      errorMessage: "This username/email is already taken",
+      errorMessage: "This username/email is already taken"
     });
   } else {
     await User.create({
@@ -30,7 +32,7 @@ export const postJoin = async (req, res) => {
       userName,
       email,
       password,
-      location,
+      location
     });
 
     return res.redirect("/login", 200, { pageTitle: "Login Page" });
@@ -140,9 +142,10 @@ export const finishGithubLogin = async (req, res) => {
       req.session.user = user;
       res.redirect("/");
     } else {
+      console.log("새로만들기");
       if (userData.name === undefined || userData.name === null)
         userData.name = "zsun";
-      console.log("새로만들기");
+
       user = await User.create({
         name: userData.name,
         avatarUrl: userData.avatar_url,
@@ -152,7 +155,7 @@ export const finishGithubLogin = async (req, res) => {
         password: "",
         location: userData.location,
       });
-
+      
       req.session.loggedIn = true;
       req.session.user = user;
       res.redirect("/");
@@ -180,7 +183,9 @@ export const postEdit = async (req, res) => {
     body: { name, email, userName, location },
     file: { path },
   } = req;
+
   console.log("file", file);
+  
   // update 전 userName, email 중복 체크
   if (orgEmail === email && orgUserName === userName) {
     // 기본적으로 update 이전 데이터를 반환 (new : true 시 update 이후 데이터 반환)

@@ -9,19 +9,15 @@ export const localMiddlware = (req, res, next) => {
 };
 
 export const protectorMiddleware = (req, res, next) => {
-  if (req.session.loggedIn) {
-    return next();
-  } else {
-    return res.redirect("/login");
-  }
+  if (req.session.loggedIn) return next();
+
+  return res.redirect("/login");
 };
 
 export const publicMiddleware = (req, res, next) => {
-  if (!req.session.loggedIn) {
-    return next();
-  } else {
-    return res.redirect("/");
-  }
+  if (!req.session.loggedIn) return next();
+  
+  return res.redirect("/");
 };
 
 // File Upload

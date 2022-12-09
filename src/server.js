@@ -28,7 +28,6 @@ app.use(
       maxAge: 1000 * 60 * 30, // 30분
     },
     saveUninitialized: false,
-
     store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
   })
 );

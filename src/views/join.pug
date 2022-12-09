@@ -2,8 +2,8 @@ extends base.pug
 
 block content 
     if errorMessage 
-    span=errorMessage
-    form(method="POST") 
+    span #{errorMessage}
+    form(method="POST" action="/join") 
         input(type="text" name = 'name' placeHolder="Name" required)
         input(type="email" name = 'email' placeHolder="E-mail"  required)
         input(type="text" name = 'userName' placeHolder="User Name"  required)
@@ -14,4 +14,4 @@ block content
     hr
     div 
       span Already have an account?
-      a(href="/login") Log in now &raar; 
+      a(href="/login") Log in now &rarr; 
