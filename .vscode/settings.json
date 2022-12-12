@@ -1,3 +1,11 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+
+    // Fira Code
+    "editor.fontFamily": "Fira Code",
+    //  "editor.fontFamily": "Fira Code Light",
+    //  "editor.fontFamily": "Fira Code Regular",
+    // "editor.fontFamily": "FiraCode-VF",
+    // "editor.fontFamily": "Fira Code SemiBold",
+    "editor.fontLigatures": true,
 }
