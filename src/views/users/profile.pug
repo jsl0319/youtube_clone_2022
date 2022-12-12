@@ -1,4 +1,16 @@
 extends ../base.pug
 
 block content 
-    h1 hello
+    if user.avatarUrl
+        img(src=`/${user.avatarUrl}`, width="100", height="100")
+    div 
+        label(for="name") Name 
+        span(id="name") #{user.name}
+        label(for="email") E-mail
+        span(id="email") #{user.email}
+        label(for="userName") User-name
+        span(id="userName") #{user.userName}
+        label(for="location") Location
+        span(id="location") #{user.location}
+    hr
+    a(href="edit") Edit Profile &rarr;

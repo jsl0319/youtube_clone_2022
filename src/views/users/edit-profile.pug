@@ -7,11 +7,16 @@ block content
     form(method="POST" enctype="multipart/form-data") 
         label(for="avatar") Avatar
         input(type="file", id="avatar", name="avatar", accept="image/*") 
+        label(for="name") Name
         input(type="text", name='name', placeHolder="Name", value=loggedInUser.name, required)
+        label(for="email") E-mail
         input(type="email", name='email', placeHolder="E-mail", value=loggedInUser.email, required)
+        label(for="userName") User-name
         input(type="text", name='userName', placeHolder="User Name", value=loggedInUser.userName, required)
+        label(for="location") Location
         input(type="text", name='location', placeHolder="Location", value=loggedInUser.location, required)
         input(type="submit", value="Edit User")
+        
         if !loggedInUser.socialOnly
             hr
             a(href="change-password") Change Password &rarr;

@@ -2,14 +2,13 @@ import express from "express";
 import {
   getEdit,
   postEdit,
-  remove,
-  see,
+  getProfile,
   startGithubLogin,
   finishGithubLogin,
   logout,
   getChangePassword,
   postChangePassword,
-} from "../controller/usercontroller";
+} from "../controller/userController";
 import {
   protectorMiddleware,
   publicMiddleware,
@@ -26,12 +25,11 @@ usersRouter
   .get(getEdit)
   .post(avatarUpload.single("avatar"), postEdit);
 usersRouter
-  .route("/change-password")
-  .all(protectorMiddleware)
-  .get(getChangePassword)
-  .post(postChangePassword);
+.route("/change-password")
+.all(protectorMiddleware)
+.get(getChangePassword)
+.post(postChangePassword);
 usersRouter.get("/logout", logout);
-usersRouter.get("/remove", remove);
-usersRouter.get("/:id([0-9a-f]{24})", see);
+usersRouter.get("/:id([0-9a-f]{24})", getProfile);
 
 export default usersRouter;
