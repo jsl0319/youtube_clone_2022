@@ -5,6 +5,13 @@ import User from "../models/User";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
+let ghToken;
+
+let kkoToken;
+let kkoUserId;
+
+let naverToken;
+
 /**
  * 회원가입 화면
  */
@@ -173,10 +180,140 @@ export const finishGithubLogin = async (req, res) => {
   return res.redirect("/login");
 };
 /**
+ * 카카오 로그인
+ */
+export const getKakaoOauthCode = (req, res) => {
+  const baseUrl = `${process.env.KKO_BASE_URL}/oauth/authorize`;
+  const config = {
+    client_id: process.env.KKO_API_KEY,
+    redirect_uri: process.env.KKO_REDIRECT_URI,
+    response_type:'code'
+  }
+  const param = new URLSearchParams(config).toString();
+  const finishUrl = `${baseUrl}?${param}`;
+
+  return res.redirect(finishUrl);
+};
+
+export const getKakaoOauthToken = async (req, res) => {
+  const baseUrl = `${process.env.KKO_BASE_URL}/oauth/token`
+  const config = {
+    client_id: process.env.KKO_API_KEY,
+    client_secret: process.env.KKO_API_SECRET,
+    code: req.query.code,
+    grant_type: 'authorization_code',
+    redirect_uri: process.env.KKO_REDIRECT_URI,
+    scope: 'account_email,gender,profile_nickname,profile_image'
+  }
+
+  const param = new URLSearchParams(config).toString();
+  const getTokenUrl = `${baseUrl}?${param}`;
+
+  // 토큰 요청
+  const tokenInfo = await (
+    await fetch(getTokenUrl, 
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/x-www-form-urlencoded"
+        }
+      })
+  ).json();
+
+  const {
+          token_type,
+          access_token,
+          expires_in,
+          refresh_token,
+          refresh_token_expires_in,
+          scope
+        } = tokenInfo;
+  kkoToken = `${token_type} ${access_token}`;
+
+  console.log('kkoToken::',kkoToken);
+
+  const getUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
+  
+  // 유저정보
+  const userData = await (
+    await fetch(getUserInfoUrl, {
+        method: "POST",
+        headers :{
+          Authorization: `${kkoToken}`
+        }
+      })
+      ).json();
+
+    if(!userData)
+      return res.redirect('/login');
+
+    const { email } = userData.kakao_account;
+    console.log('userData.id',userData.id);
+    kkoUserId = userData.id;
+
+    let user = await User.findOne({ email });
+
+    console.log('user::', user);
+    
+    if (user) {
+      console.log("바로 로그인");
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
+    } 
+    else {
+      console.log("새로만들기");
+      if (userData.name === undefined || userData.name === null)
+        userData.name = "zsun";
+
+      user = await User.create({
+        name: userData.kakao_account.profile.nickname,
+        avatarUrl: userData.kakao_account.profile.profile_image_url,
+        socialOnly: true,
+        userName: userData.kakao_account.profile.nickname,
+        email,
+        password: "",
+        location: "",
+      });
+      
+      req.session.loggedIn = true;
+      req.session.user = user;
+      return res.redirect("/");
+    }
+
+  return res.redirect('/login');
+}
+/**
  * 로그아웃
  */
-export const logout = (req, res) => {
-  // session clear
+export const logout = async (req, res) => {
+  //kakao 
+  if(kkoUserId) {
+    // 로그아웃 토큰만료
+    const baseUrl = 'https://kapi.kakao.com/v1/user/logout';
+    const config = {
+      target_id_type: 'user_id',
+      target_id: kkoUserId
+    }
+  
+    const param = new URLSearchParams(config).toString();
+    // 4. 완성된 url
+    const finishUrl = `${baseUrl}?${param}`;
+    
+    const userData = await (
+      await fetch(finishUrl, {
+          method: "POST",
+          headers :{
+            Authorization: `${kkoToken}`
+          }
+        })
+      ).json();
+
+      kkoToken = null;
+      kkoUserId = null;
+  }
+  
+  // app session clear
   req.session.destroy();
   return res.redirect("/");
 };

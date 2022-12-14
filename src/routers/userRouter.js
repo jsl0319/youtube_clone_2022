@@ -5,6 +5,8 @@ import {
   getProfile,
   startGithubLogin,
   finishGithubLogin,
+  getKakaoOauthCode,
+  getKakaoOauthToken,
   logout,
   getChangePassword,
   postChangePassword,
@@ -17,8 +19,12 @@ import {
 
 const usersRouter = express.Router();
 
+// github login
 usersRouter.get("/github/start", publicMiddleware, startGithubLogin);
 usersRouter.get("/github/finish", publicMiddleware, finishGithubLogin);
+// kakao login
+usersRouter.get("/kakao/start", publicMiddleware, getKakaoOauthCode);
+usersRouter.get("/kakao/finish", publicMiddleware, getKakaoOauthToken);
 usersRouter
   .route("/edit")
   .all(protectorMiddleware)
@@ -33,3 +39,4 @@ usersRouter.get("/logout", logout);
 usersRouter.get("/:id([0-9a-f]{24})", getProfile);
 
 export default usersRouter;
+// kakao 로그인 ... 와서 마져...
