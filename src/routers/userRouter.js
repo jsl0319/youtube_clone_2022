@@ -7,6 +7,8 @@ import {
   finishGithubLogin,
   getKakaoOauthCode,
   getKakaoOauthToken,
+  startNaverLogin,
+  finishNaverLogin,
   logout,
   getChangePassword,
   postChangePassword,
@@ -25,6 +27,9 @@ usersRouter.get("/github/finish", publicMiddleware, finishGithubLogin);
 // kakao login
 usersRouter.get("/kakao/start", publicMiddleware, getKakaoOauthCode);
 usersRouter.get("/kakao/finish", publicMiddleware, getKakaoOauthToken);
+// naver login
+usersRouter.get("/naver/start", publicMiddleware, startNaverLogin);
+usersRouter.get("/naver/finish", publicMiddleware, finishNaverLogin);
 usersRouter
   .route("/edit")
   .all(protectorMiddleware)
@@ -39,4 +44,3 @@ usersRouter.get("/logout", logout);
 usersRouter.get("/:id([0-9a-f]{24})", getProfile);
 
 export default usersRouter;
-// kakao 로그인 ... 와서 마져...

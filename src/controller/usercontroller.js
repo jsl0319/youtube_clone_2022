@@ -210,7 +210,7 @@ export const getKakaoOauthToken = async (req, res) => {
   const getTokenUrl = `${baseUrl}?${param}`;
 
   // 토큰 요청
-  const tokenInfo = await (
+  const tokenData = await (
     await fetch(getTokenUrl, 
       {
         method: "POST",
@@ -227,7 +227,8 @@ export const getKakaoOauthToken = async (req, res) => {
           refresh_token,
           refresh_token_expires_in,
           scope
-        } = tokenInfo;
+        } = tokenData;
+
   kkoToken = `${token_type} ${access_token}`;
 
   console.log('kkoToken::',kkoToken);
@@ -248,7 +249,6 @@ export const getKakaoOauthToken = async (req, res) => {
       return res.redirect('/login');
 
     const { email } = userData.kakao_account;
-    console.log('userData.id',userData.id);
     kkoUserId = userData.id;
 
     let user = await User.findOne({ email });
@@ -283,6 +283,120 @@ export const getKakaoOauthToken = async (req, res) => {
 
   return res.redirect('/login');
 }
+
+/**
+ * Naver login
+ */
+export const startNaverLogin = (req, res) => {
+  // 1. 기초 url
+  const baseUrl = "https://nid.naver.com/oauth2.0/authorize";
+  // 2. 요청 parameter
+  const config = {
+    response_type: 'code',
+    client_id: process.env.NAVER_CLIENT,
+    redirect_uri: process.env.NAVER_REDIRECT_URI,
+    state: 'state_code',
+  };
+  // 3. 객체 parameter -> string 변환
+  const param = new URLSearchParams(config).toString();
+  // 4. 완성된 url
+  const finishUrl = `${baseUrl}?${param}`;
+
+  console.log('NAVER start:::', finishUrl);
+  return res.redirect(finishUrl);
+};
+export const finishNaverLogin = async (req, res) => {
+  console.log('### finishNaverLogin');
+  console.log('### req.query::', req.query);
+
+  // 1. 기초 url
+  const baseUrl = "https://nid.naver.com/oauth2.0/token";
+  // 2. 요청 parameter
+  const config = {
+    grant_type: 'authorization_code',
+    client_id: process.env.NAVER_CLIENT,
+    client_secret:process.env.NAVER_SECRET,
+    code: req.query.code,
+    state: req.query.state,
+    refresh_token: '' ,
+    access_token: '',
+    service_provider: 'NAVER'
+  };
+
+  const param = new URLSearchParams(config).toString();
+  const getTokenUrl = `${baseUrl}?${param}`;
+
+  // 토큰 요청
+  const tokenData = await (
+    await fetch(getTokenUrl, 
+      {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/x-www-form-urlencoded"
+        }
+      })
+  ).json();
+
+  const {
+          token_type,
+          access_token,
+          refresh_token,
+          expires_in,
+          error,
+          error_description
+        } = tokenData;
+
+        naverToken = `${token_type} ${access_token}`
+        console.log('naverToken::', naverToken);
+
+        const getUserInfoUrl = 'https://openapi.naver.com/v1/nid/me';
+        
+        // 유저정보
+        const userData = await (
+          await fetch(getUserInfoUrl, {
+              method: "POST",
+              headers :{
+                Authorization: `${naverToken}`
+              }
+            })
+            ).json();
+      
+          if(!userData)
+            return res.redirect('/login');
+      
+
+          console.log('userData:::', userData);
+
+          const { name, nickname, email, profile_image  } = userData.response;
+      
+          let user = await User.findOne({ email });
+      
+          if (user) {
+            console.log("바로 로그인");
+            req.session.loggedIn = true;
+            req.session.user = user;
+            return res.redirect("/");
+          } 
+          else {
+            console.log("새로만들기");
+            user = await User.create({
+              name: nickname,
+              avatarUrl: profile_image,
+              socialOnly: true,
+              userName: name,
+              email,
+              password: "",
+              location: "",
+            });
+            
+            req.session.loggedIn = true;
+            req.session.user = user;
+            return res.redirect("/");
+          }
+      
+        return res.redirect('/login');
+}
+
 /**
  * 로그아웃
  */
